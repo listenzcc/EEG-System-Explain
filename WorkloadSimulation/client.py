@@ -10,7 +10,7 @@ from toolbox import unpack
 IP = 'localhost'
 IP = '192.168.31.38'
 port = 63365
-buffer_size = 20000
+buffer_size = 1024
 coding = 'utf-8'
 
 
@@ -69,17 +69,21 @@ class TCPClient(object):
                 # Wait until new message is received
                 income = b''
                 while len(income) < 16000:
-                    income += self.client.recv(16000 - len(income))
+                    income += self.client.recv(min(self.buffer_size,
+                                               16000 - len(income)))
 
                 if income == b'':
                     logger.debug('Received empty message')
                     break
-                logger.debug(f'Received message: {len(income)}: {income[:20]}')
+
+                logger.debug(
+                    f'Received message: {len(income)}: {income[:20]}')
 
                 try:
                     arr = unpack(income, 4000)
                     x = arr[37]
-                    logger.debug(f'Parse array: {x}, {len(arr)}')
+                    y = arr[38]
+                    logger.debug(f'Parse array: {x} | {y}, {len(arr)}')
                     if x == 0:
                         t0 = time.time()
                         num = 0

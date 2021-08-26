@@ -197,9 +197,11 @@ def interface():
         #     continue
 
         if inp.startswith('start '):
-            for j in range(100):
+            arr = np.random.rand(size)
+            for j in range(1000):
                 arr[37] = j
                 buffer = pack(arr)
+                print(arr[38])
                 for session in server.alive_sessions():
                     session.send(buffer)
 
